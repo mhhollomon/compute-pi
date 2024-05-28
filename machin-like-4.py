@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import argparse
 import datetime
-from mpmath import mp, mpf, workdps
+from mpmath import mp, mpf
 
 from typing import List, NamedTuple
 
-name = 'machin-with-shanks'
-description = 'Approximate pi using a "Machin-like" arctan formula helped with shanks` transform'
-digits_per_iter = 3.4
+name = 'machin-like-4'
+description = 'Approximate pi using a "Machin-like" arctan formula with 4 terms'
+digits_per_iter = 3.39
 count_between_progress = 500
 
 Params = NamedTuple('Params', factor=int, base=int)
@@ -16,15 +16,13 @@ class MachinTerm :
     def __init__(self, factor, argument) -> None:
         self.factor = factor
         self.argument = argument
-        self.nextterm = mpf(0)
-        self.nextnextterm = mpf(0)
-
+ 
         self.power = argument
         self.partial = argument
 
         self.sign : int = 1
         self.k : int = 0
-        self.divisor = mpf(1)        
+        self.divisor = mpf(1)
 
     def compute_term(self) :
         self.k += 1
@@ -34,28 +32,15 @@ class MachinTerm :
         self.power *= self.argument**2
 
         new_term = self.power * self.sign / self.divisor
-
-        self.partial += self.nextterm
-        self.nextterm = self.nextnextterm
-        self.nextnextterm = new_term
-
-    def compute_shank(self) :
-        # print(f">>>> {m}")
-        n_plus_1 = self.partial + self.nextterm + self.nextnextterm
-
-        shank = n_plus_1 + (self.nextnextterm**2 / (self.nextnextterm -self.nextterm))
-        return shank * self.factor
+        self.partial += new_term
 
 
-    def __str__(self) -> str:
-        with workdps(10) :
-            return f"MachineInfo[partial={self.partial}, n={self.nextterm}, nn={self.nextnextterm} ]"
 
 Parameters = [
     Params(12, 49),
     Params(32, 57),
     Params(-5, 239),
-    Params(12,110443)
+    Params(12, 110443)
 ]
 
 class machin :
@@ -64,7 +49,7 @@ class machin :
 
         self.params = [MachinTerm(
             factor = mpf(p.factor), 
-            argument = mpf(1) / p.base
+            argument = mpf(1) / p.base,
             ) for p in Parameters]
 
     
@@ -77,14 +62,14 @@ class machin :
     def approx_pi(self) :
         total = mpf(0) 
         for t in self.params :
-            total += t.compute_shank()
+            total += t.partial * t.factor
 
         return total * 4
     
 
 def main(iterations : int = 100) :
 
-    dps = int(iterations * digits_per_iter ) + 20
+    dps = int(iterations * digits_per_iter) + 20
     if dps < 1000 :
         dps = 1000
 
@@ -108,7 +93,7 @@ def main(iterations : int = 100) :
     index = int(iterations*digits_per_iter + 2)
     if index < 52 :
         index = 52
-    pi_str : str = str(C.approx_pi())[:index]
+    pi_str : str = str(pi)[:index]
 
     print_digit_string(pi_str)
 
@@ -143,7 +128,6 @@ def print_digit_string(digits: str) :
     for i in range(0, len(groups), gpl) :
         print(" ".join(groups[i:i+10]))
 
-        
 #--------------------------------------------
 def get_args() :
     parser = argparse.ArgumentParser(

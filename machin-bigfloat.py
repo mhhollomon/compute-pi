@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 import argparse
 import datetime
-from mpmath import mp, mpf
+
+from bigfloat import BigFloat, setcontext, Context, pow, div, mul
 
 from typing import NamedTuple
-
-name = 'machin-like'
+from dataclasses import dataclass
+name = 'machin-bigfloat'
 description = 'Approximate pi using a "Machin-like" arctan formula'
 digits_per_iter = 1.84
 count_between_progress = 500
@@ -16,22 +17,19 @@ class MachinTerm :
     def __init__(self, factor, argument) -> None:
         self.factor = factor
         self.argument = argument
-        
-        self.power = argument
         self.partial = argument
 
         self.sign : int = 1
         self.k : int = 0
-        self.divisor = mpf(1)
+        self.divisor = BigFloat(1)
 
     def compute_term(self) :
         self.k += 1
         self.sign *= -1
         self.divisor += 2
 
-        self.power *= self.argument**2
-
-        new_term = self.power * self.sign / self.divisor
+        power =  pow(self.argument, self.divisor)
+        new_term = div(mul(power, self.sign), self.divisor)
         self.partial += new_term
 
 
@@ -47,8 +45,8 @@ class machin :
         self.k = 0
 
         self.params = [MachinTerm(
-            factor = mpf(p.factor), 
-            argument = mpf(1) / p.base,
+            factor = BigFloat(p.factor), 
+            argument = div(BigFloat(1), p.base),
             ) for p in Parameters]
 
     
@@ -58,8 +56,8 @@ class machin :
         for t in self.params :
             t.compute_term()
 
-    def approx_pi(self) :
-        total = mpf(0) 
+    def approx_pi(self) -> BigFloat :
+        total = BigFloat(0) 
         for t in self.params :
             total += t.partial * t.factor
 
@@ -68,11 +66,12 @@ class machin :
 
 def main(iterations : int = 100) :
 
-    dps = int(iterations * digits_per_iter) + 20
+    dps = int(iterations * digits_per_iter * 1.1)
     if dps < 1000 :
         dps = 1000
 
-    mp.dps = dps
+    # bigfloat precision is in bits
+    setcontext(Context(precision=int(1+3.333*dps)))
 
     C = machin()
 
@@ -87,8 +86,8 @@ def main(iterations : int = 100) :
 
 
     pi = C.approx_pi()
-    precision = pi.context.dps
-    bits = pi.context.prec
+    bits = pi.precision
+    precision = int(bits / 3.333)
 
     index = int(iterations*digits_per_iter + 2)
     if index < 52 :
@@ -96,6 +95,7 @@ def main(iterations : int = 100) :
     pi_str : str = str(pi)[:index]
     print(">> Index =", index)
     print(">> len =", len(pi_str))
+
     places : int = 12
     start : int = 0
     n : int = 0
