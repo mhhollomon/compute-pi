@@ -1,8 +1,12 @@
 # compute-pi
 Various attempts to compute pi in python.
 
-*NOTE* - all of these are very naive implementations of the algorthim and
+*NOTE* - all of these are very naive implementations of the algorithms and
 are intended more as learning aids and demos than serious attempts at speed.
+
+The million digits of pi in the file `pi-digits-formatted` were sourced from
+[Million digits](https://www.piday.org/million/) and reformatted to match the output
+of these programs using the `format_pi.py` program
 
 ## Set up
 You will definitely want to make sure you install [GMP](https://gmplib.org/)
@@ -178,9 +182,9 @@ on what I could do.
 |leibnitz          * |  ?         | 5E100000 (ish) |
 |shanks            * |  ?         | 44,000,000 with 100 layers |
 |machin-like         |  5:17:55   | 555,555 |
-|machin-like-4       |  5:09:42   | 295,334 |
+|machin-like-4       |  5:09:42   | 296,882 |
 |machin-with-shanks  |  5:35:27   | 294,118 |
-|machin-4-mp         |  1:22:15   | 295,334 |
+|machin-4-mp         |  1:22:15   | 296,882 |
 |chudnovsky-iter     |  0:58:09   | 100,000 |
 |chudnovsky-iter2    |  0:16:06   | 100,000 |
 

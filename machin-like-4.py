@@ -7,7 +7,7 @@ from typing import List, NamedTuple
 
 name = 'machin-like-4'
 description = 'Approximate pi using a "Machin-like" arctan formula with 4 terms'
-digits_per_iter = 3.39
+digits_per_iter = 3.369
 count_between_progress = 500
 
 Params = NamedTuple('Params', factor=int, base=int)

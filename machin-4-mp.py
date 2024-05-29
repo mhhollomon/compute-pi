@@ -11,7 +11,7 @@ import functools
 
 name = 'machin-4-mp'
 description = 'Approximate pi using a "Machin-like" arctan formula with 4 terms'
-digits_per_iter = 3.39
+digits_per_iter = 3.369
 count_between_progress = 500
 
 Params = NamedTuple('Params', factor=int, base=int)
@@ -82,7 +82,7 @@ class machin :
 
 def main(iterations : int = 100) :
 
-    dps = int(iterations * digits_per_iter) + 20
+    dps = int(iterations * digits_per_iter ) + 100
     if dps < 1000 :
         dps = 1000
 
