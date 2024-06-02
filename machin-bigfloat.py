@@ -5,7 +5,6 @@ import datetime
 from bigfloat import BigFloat, setcontext, Context, pow, div, mul
 
 from typing import NamedTuple
-from dataclasses import dataclass
 name = 'machin-bigfloat'
 description = 'Approximate pi using a "Machin-like" arctan formula'
 digits_per_iter = 1.84
@@ -18,6 +17,9 @@ class MachinTerm :
         self.factor = factor
         self.argument = argument
         self.partial = argument
+        self.power = argument
+
+        self.arg_squared = pow(argument, 2)
 
         self.sign : int = 1
         self.k : int = 0
@@ -28,8 +30,8 @@ class MachinTerm :
         self.sign *= -1
         self.divisor += 2
 
-        power =  pow(self.argument, self.divisor)
-        new_term = div(mul(power, self.sign), self.divisor)
+        self.power *= self.arg_squared
+        new_term = div(mul(self.power, self.sign), self.divisor)
         self.partial += new_term
 
 

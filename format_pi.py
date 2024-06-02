@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+#
+# Format a string of digits into groups of 10 digits with
+# 10 groups per line. Add a group count along the left
+# margin.
+#
 import sys
 from typing import List
 
